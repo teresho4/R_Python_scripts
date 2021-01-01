@@ -1,0 +1,121 @@
+---
+title: "RF"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(mlbench)
+data(Glass)
+library(randomForest)
+library(MASS)
+library(caret)
+```
+
+Random Forest Classifier for Glass dataset
+
+```{r}
+Glass$Type <- as.factor(c(rep('Window', 163), rep('Non-Window', 51)))
+set.seed(42)
+train <- sample(1:nrow(Glass), nrow(Glass)/2)
+```
+
+
+```{r}
+# sample size
+ceiling(.632*nrow(Glass[-train,]))
+# number of vars at each split
+floor(sqrt(ncol(Glass)))
+```
+
+
+```{r}
+set.seed(42)
+rf_class <- randomForest(Type ~ ., data = Glass,
+                         subset = train,
+                         mtry = 3,
+                         sampsize = 68,
+                         importance = T)
+rf_class
+```
+```{r}
+# test
+est_medv <- predict(rf_class, newdata = Glass[-train,])
+mean(est_medv != Glass$Type[-train])
+```
+```{r}
+set.seed(42)
+ntrees <- 500
+rf_class <- randomForest(Type ~ ., data = Glass,
+                         subset = train,
+                         ntree = ntrees,
+                         mtry = 3,
+                         sampsize = 68,
+                         importance = T,
+                         do.trace = ntrees/10)
+rf_class
+```
+
+```{r}
+varImpPlot(rf_class)
+```
+
+```{r}
+set.seed(42)
+ntrees <- 150
+rf_class <- randomForest(Type ~ ., data = Glass,
+                         subset = train,
+                         ntree = ntrees,
+                         mtry = 3,
+                         sampsize = 68,
+                         importance = T,
+                         do.trace = ntrees/25)
+rf_class
+```
+
+```{r}
+# test
+est_medv <- predict(rf_class, newdata = Glass[-train,])
+mean(est_medv != Glass$Type[-train])
+```
+
+```{r}
+set.seed(42)
+ntrees <- 90
+rf_class <- randomForest(Type ~ ., data = Glass,
+                         subset = train,
+                         ntree = ntrees,
+                         mtry = 3,
+                         sampsize = 68,
+                         importance = T,
+                         do.trace = ntrees/30)
+rf_class
+```
+
+```{r}
+# test
+est_medv <- predict(rf_class, newdata = Glass[-train,])
+mean(est_medv != Glass$Type[-train])
+```
+
+
+```{r}
+set.seed(42)
+ntrees <- 96
+rf_class_2 <- randomForest(Type ~ ., data = Glass,
+                         subset = train,
+                         ntree = ntrees,
+                         mtry = 3,
+                         sampsize = 68,
+                         importance = T)
+rf_class_2
+```
+
+```{r}
+# test
+est_medv_2 <- predict(rf_class_2, newdata = Glass[-train,])
+mean(est_medv_2 != Glass$Type[-train])
+```
